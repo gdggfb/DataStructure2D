@@ -6,6 +6,7 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -18,11 +19,6 @@ import javax.swing.JTextField;
 public class StartDraw {
 
 	public static void main(String[] args) {
-		RedBlackTree ddd = new RedBlackTree();
-		for (int i = 0; i < 25; i++) {
-			ddd.put(i);
-		}
-
 		EventQueue.invokeLater(new Runnable() {
 			@Override
 			public void run() {
@@ -38,8 +34,6 @@ public class StartDraw {
 		board.setLayout(new BoxLayout(board, BoxLayout.Y_AXIS));
 		JScrollPane scrollPane = new JScrollPane(board);
 
-		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
 		viewJpanel.setLayout(new BoxLayout(viewJpanel, BoxLayout.Y_AXIS));
 		viewJpanel.add(scrollPane);
 		viewJpanel.setSize(600, 600);
@@ -50,10 +44,14 @@ public class StartDraw {
 		JTextField textField1 = new JTextField();
 		textField1.setColumns(2);
 
+		RedBlackTree tree = new RedBlackTree();
+		Random r = new Random();
+
 		actionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				tree.put(r.nextInt(80));
 				if (RedBlackTree.size > 1) {
-					board.add(new TreeJpanel(RedBlackTree.root));
+					board.add(new TreeJpanel(tree.root));
 					board.revalidate();
 				}
 			}
@@ -95,7 +93,7 @@ public class StartDraw {
 		JFrame frame = new JFrame("Tool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panelContainer.setOpaque(true);
-		frame.setSize(new Dimension(1200, 720));
+		frame.setSize(new Dimension(1366, 760));
 		frame.setContentPane(panelContainer);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);

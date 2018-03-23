@@ -6,6 +6,9 @@ import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 import javax.swing.JPanel;
 
@@ -14,12 +17,13 @@ import cc.xkxk.learn.DataStructure2D.RedBlackTree.Entry;
 public class TreeJpanel extends JPanel {
 	private static final long serialVersionUID = -8983985863229007323L;
 	private static Font font = null;
-	private static int width = 1000;
-	private static int height = 400;
-	private static int diameter = 20; // ��ֱ��
-	private static int distanceX = 8; // ��������ˮƽ����
-	private static int distanceY = 30; // �������Ĵ�ֱ����
+	private int width = 1000;
+	private int height = 400;
+	private int diameter = 20;
+	private int distanceX = 11;
+	private int distanceY = 30;
 	private Entry root = null;
+	private List<Graph> list = new ArrayList<>();
 
 	public TreeJpanel() {
 		setPreferredSize(new Dimension(width, height));
@@ -30,6 +34,11 @@ public class TreeJpanel extends JPanel {
 		setPreferredSize(new Dimension(width, height));
 		setLayout(null);
 		this.root = root;
+	}
+
+	private int countOffset(int depth) {
+		int n = (int) (distanceX * Math.pow(depth, 1.6) / 1.7);
+		return n;
 	}
 
 	public void countDepth(Entry node, Entry nodeP, boolean isLeft) {
@@ -63,19 +72,23 @@ public class TreeJpanel extends JPanel {
 		countDepth(node.right, node, false);
 	}
 
-	public void drawNode(Graphics graphics, Graphics2D graphics2D, Entry node, int px, int py, boolean isLeft) {
-		int x, y, offset, depth;
+	public void drawNode(Entry node, int px, int py, boolean isLeft) {
+		int x, y, offset;
 		if (node == root) {
-			x = width / 2 - diameter / 2 - (root.depthR - root.depthL) * distanceX * 2;
+			if (root.depthL > 6 || root.depthR > 6) {
+				x = (width * root.depthL) / (root.depthL + root.depthR);
+			} else {
+				x = width / 2 - diameter / 2;
+			}
 			y = 20;
 		} else {
 			y = py + distanceY;
 			if (node == null) {
-				graphics2D.drawArc(isLeft ? (px - distanceX) : (px + distanceX), y, diameter, diameter, 0, 360);
+				list.add(new Graph(2, Color.RED, isLeft ? (px - distanceX) : (px + distanceX), y, diameter, diameter,
+						null));
 				return;
 			} else {
-				depth = isLeft ? node.parent.depthL : node.parent.depthR;
-				offset = distanceX * depth * 3;
+				offset = countOffset(isLeft ? node.parent.depthL : node.parent.depthR);
 				x = isLeft ? (px - offset) : (px + offset);
 			}
 		}
@@ -87,29 +100,48 @@ public class TreeJpanel extends JPanel {
 			rax = x + distanceX + diameter / 2;
 			ray = y + distanceY + diameter / 2;
 		} else {
-			rax = x + distanceX * node.depthR * 3 + diameter / 2;
+			rax = x + countOffset(node.depthR) + diameter / 2;
 			ray = y + distanceY + diameter / 2;
 		}
 		if (node.left == null) {
 			lax = x - distanceX + diameter / 2;
 			lay = y + distanceY + diameter / 2;
 		} else {
-			lax = x - distanceX * node.depthL * 3 + diameter / 2;
+			lax = x - countOffset(node.depthL) + diameter / 2;
 			lay = y + distanceY + diameter / 2;
 		}
-		graphics2D.setColor(Color.BLUE);
-		graphics2D.drawLine(ax, ay, lax, lay);
-		graphics2D.drawLine(ax, ay, rax, ray);
-		graphics2D.setColor(node.color ? Color.BLACK : Color.RED);
-		graphics2D.fillArc(x, y, diameter, diameter, 0, 360);
-		graphics2D.drawString(String.valueOf(node.key), x, y);
-		drawNode(graphics, graphics2D, node.left, x, y, true);
-		drawNode(graphics, graphics2D, node.right, x, y, false);
+
+		list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay, null));
+		list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray, null));
+		list.add(new Graph(1, node.color ? Color.BLACK : Color.RED, x, y, diameter, diameter, null));
+		list.add(new Graph(3, Color.BLACK, x, y, 0, 0, String.valueOf(node.key)));
+
+		drawNode(node.left, x, y, true);
+		drawNode(node.right, x, y, false);
 	}
 
-	private void checkFont() {
-		if (font == null) {
-			font = new Font("����", Font.PLAIN, 18);
+	private void drawNode(Graphics2D graphics2D) {
+		list.sort(new Comparator<Graph>() {
+			@Override
+			public int compare(Graph o1, Graph o2) {
+				return o1.type - o2.type;
+			}
+		});
+
+		for (Graph g : list) {
+			graphics2D.setColor(g.color);
+			if (g.type == 0) {
+				graphics2D.drawLine(g.x1, g.y1, g.x2, g.y2);
+			}
+			if (g.type == 1) {
+				graphics2D.fillArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
+			}
+			if (g.type == 2) {
+				graphics2D.drawArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
+			}
+			if (g.type == 3) {
+				graphics2D.drawString(g.value, g.x1, g.y1);
+			}
 		}
 	}
 
@@ -118,12 +150,38 @@ public class TreeJpanel extends JPanel {
 		super.paintComponent(graphics);
 		Graphics2D graphics2D = (Graphics2D) graphics.create();
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		checkFont();
+		if (font == null) {
+			font = new Font("宋体", Font.PLAIN, 18);
+		}
 
-		countDepth(root, root, true);
-
-		drawNode(graphics, graphics2D, root, 0, 0, false);
+		if (list.isEmpty()) {
+			countDepth(root, root, true);
+			drawNode(root, 0, 0, false);
+		} else {
+			drawNode(graphics2D);
+		}
 
 		graphics2D.dispose();
+	}
+
+	class Graph {
+		int type;// 0 - 直线; 1 - 实心圆；2 - 空心圆； 3 - 写字
+		Color color;
+		int x1;
+		int y1;
+		int x2;
+		int y2;
+		String value;
+
+		public Graph(int type, Color color, int x1, int y1, int x2, int y2, String value) {
+			super();
+			this.type = type;
+			this.color = color;
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+			this.value = value;
+		}
 	}
 }

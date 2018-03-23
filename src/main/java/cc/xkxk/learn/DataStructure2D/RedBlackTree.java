@@ -3,7 +3,7 @@ package cc.xkxk.learn.DataStructure2D;
 public class RedBlackTree {
 	public static final boolean RED = false;
 	public static final boolean BLACK = true;
-	public static Entry root;
+	public Entry root;
 
 	public static int size = 0;
 
