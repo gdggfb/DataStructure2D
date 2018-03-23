@@ -278,7 +278,8 @@ public class RedBlackTree {
 	}
 
 	static final class Entry {
-		int depth;
+		int depthR = 0;
+		int depthL = 0;
 		int key;
 		Entry left;
 		Entry right;

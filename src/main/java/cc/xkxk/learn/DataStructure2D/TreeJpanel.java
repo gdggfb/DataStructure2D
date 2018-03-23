@@ -14,12 +14,11 @@ import cc.xkxk.learn.DataStructure2D.RedBlackTree.Entry;
 public class TreeJpanel extends JPanel {
 	private static final long serialVersionUID = -8983985863229007323L;
 	private static Font font = null;
-	private static int width = 600;
+	private static int width = 1000;
 	private static int height = 400;
-	private static int diameter = 20; // ÇòÖ±¾¶
-	private static int distanceX = 10; // Á½ÇòÇòÐÄË®Æ½¾àÀë
-	private static int distanceY = 30; // Á½ÇòÇòÐÄ´¹Ö±¾àÀë
-	private static int maxDepth = 0; //
+	private static int diameter = 20; // ï¿½ï¿½Ö±ï¿½ï¿½
+	private static int distanceX = 8; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ë®Æ½ï¿½ï¿½ï¿½ï¿½
+	private static int distanceY = 30; // ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Ä´ï¿½Ö±ï¿½ï¿½ï¿½ï¿½
 	private Entry root = null;
 
 	public TreeJpanel() {
@@ -33,46 +32,71 @@ public class TreeJpanel extends JPanel {
 		this.root = root;
 	}
 
-	public void countDepth(Entry node) {
+	public void countDepth(Entry node, Entry nodeP, boolean isLeft) {
 		if (node == null) {
+			if (isLeft) {
+				nodeP.depthL = 1;
+			} else {
+				nodeP.depthR = 1;
+			}
+			int i = 1;
+			for (Entry n = nodeP; n.parent != null; n = n.parent) {
+				i++;
+				if (n == n.parent.left) {
+					if (n.parent.depthL >= i) {
+						break;
+					} else {
+						n.parent.depthL = i;
+					}
+				} else {
+					if (n.parent.depthR >= i) {
+						break;
+					} else {
+						n.parent.depthR = i;
+					}
+				}
+			}
 			return;
 		}
 
-		if (node == root) {
-			node.depth = 0;
-		} else {
-			node.depth = node.parent.depth + 1;
-		}
-
-		if (maxDepth < node.depth) {
-			maxDepth = node.depth;
-		}
-
-		countDepth(node.left);
-		countDepth(node.right);
+		countDepth(node.left, node, true);
+		countDepth(node.right, node, false);
 	}
 
 	public void drawNode(Graphics graphics, Graphics2D graphics2D, Entry node, int px, int py, boolean isLeft) {
-		int x, y;
+		int x, y, offset, depth;
 		if (node == root) {
-			x = width / 2 - diameter / 2;
+			x = width / 2 - diameter / 2 - (root.depthR - root.depthL) * distanceX * 2;
 			y = 20;
 		} else {
-			int offset = distanceX * maxDepth;
-			x = isLeft ? (px - offset) : (px + offset);
 			y = py + distanceY;
 			if (node == null) {
-				graphics2D.drawArc(x, y, diameter, diameter, 0, 360);
+				graphics2D.drawArc(isLeft ? (px - distanceX) : (px + distanceX), y, diameter, diameter, 0, 360);
 				return;
+			} else {
+				depth = isLeft ? node.parent.depthL : node.parent.depthR;
+				offset = distanceX * depth * 3;
+				x = isLeft ? (px - offset) : (px + offset);
 			}
 		}
 
 		int ax = x + diameter / 2;
 		int ay = y + diameter / 2;
-		int lax = x - distanceX + diameter / 2;
-		int lay = y + distanceY + diameter / 2;
-		int rax = x + distanceX + diameter / 2;
-		int ray = y + distanceY + diameter / 2;
+		int lax, lay, rax, ray;
+		if (node.right == null) {
+			rax = x + distanceX + diameter / 2;
+			ray = y + distanceY + diameter / 2;
+		} else {
+			rax = x + distanceX * node.depthR * 3 + diameter / 2;
+			ray = y + distanceY + diameter / 2;
+		}
+		if (node.left == null) {
+			lax = x - distanceX + diameter / 2;
+			lay = y + distanceY + diameter / 2;
+		} else {
+			lax = x - distanceX * node.depthL * 3 + diameter / 2;
+			lay = y + distanceY + diameter / 2;
+		}
 		graphics2D.setColor(Color.BLUE);
 		graphics2D.drawLine(ax, ay, lax, lay);
 		graphics2D.drawLine(ax, ay, rax, ray);
@@ -85,7 +109,7 @@ public class TreeJpanel extends JPanel {
 
 	private void checkFont() {
 		if (font == null) {
-			font = new Font("ËÎÌå", Font.PLAIN, 18);
+			font = new Font("ï¿½ï¿½ï¿½ï¿½", Font.PLAIN, 18);
 		}
 	}
 
@@ -96,8 +120,7 @@ public class TreeJpanel extends JPanel {
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		checkFont();
 
-		countDepth(root);
-		maxDepth++;
+		countDepth(root, root, true);
 
 		drawNode(graphics, graphics2D, root, 0, 0, false);
 

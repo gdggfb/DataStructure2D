@@ -19,7 +19,7 @@ public class StartDraw {
 
 	public static void main(String[] args) {
 		RedBlackTree ddd = new RedBlackTree();
-		for (int i = 0; i < 10; i++) {
+		for (int i = 0; i < 25; i++) {
 			ddd.put(i);
 		}
 
@@ -44,8 +44,8 @@ public class StartDraw {
 		viewJpanel.add(scrollPane);
 		viewJpanel.setSize(600, 600);
 
-		JButton actionButton = new JButton("²åÈë");
-		JButton closeButton = new JButton("É¾³ý");
+		JButton actionButton = new JButton("æ’å…¥");
+		JButton closeButton = new JButton("åˆ é™¤");
 
 		JTextField textField1 = new JTextField();
 		textField1.setColumns(2);
@@ -95,7 +95,7 @@ public class StartDraw {
 		JFrame frame = new JFrame("Tool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panelContainer.setOpaque(true);
-		frame.setSize(new Dimension(680, 720));
+		frame.setSize(new Dimension(1200, 720));
 		frame.setContentPane(panelContainer);
 		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
