@@ -51,7 +51,7 @@ public class StartDraw {
 			public void actionPerformed(ActionEvent e) {
 				tree.put(r.nextInt(80));
 				if (RedBlackTree.size > 1) {
-					board.add(new TreeJpanel(tree.root));
+					board.add(new TreeJpanel(tree.root), 0);
 					board.revalidate();
 				}
 			}

@@ -1,9 +1,13 @@
 package cc.xkxk.learn.DataStructure2D;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class RedBlackTree {
 	public static final boolean RED = false;
 	public static final boolean BLACK = true;
 	public Entry root;
+	public List<String> process = new ArrayList<>();
 
 	public static int size = 0;
 
@@ -11,7 +15,7 @@ public class RedBlackTree {
 		Entry p = getEntry(key);
 		if (p == null)
 			return;
-
+		process.add("remove:" + key);
 		deleteEntry(p);
 		return;
 	}

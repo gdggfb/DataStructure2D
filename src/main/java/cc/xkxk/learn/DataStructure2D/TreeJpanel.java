@@ -25,11 +25,6 @@ public class TreeJpanel extends JPanel {
 	private Entry root = null;
 	private List<Graph> list = new ArrayList<>();
 
-	public TreeJpanel() {
-		setPreferredSize(new Dimension(width, height));
-		setLayout(null);
-	}
-
 	public TreeJpanel(Entry root) {
 		setPreferredSize(new Dimension(width, height));
 		setLayout(null);
@@ -72,7 +67,7 @@ public class TreeJpanel extends JPanel {
 		countDepth(node.right, node, false);
 	}
 
-	public void drawNode(Entry node, int px, int py, boolean isLeft) {
+	public void collectNode(Entry node, int px, int py, boolean isLeft) {
 		int x, y, offset;
 		if (node == root) {
 			if (root.depthL > 6 || root.depthR > 6) {
@@ -116,8 +111,8 @@ public class TreeJpanel extends JPanel {
 		list.add(new Graph(1, node.color ? Color.BLACK : Color.RED, x, y, diameter, diameter, null));
 		list.add(new Graph(3, Color.BLACK, x, y, 0, 0, String.valueOf(node.key)));
 
-		drawNode(node.left, x, y, true);
-		drawNode(node.right, x, y, false);
+		collectNode(node.left, x, y, true);
+		collectNode(node.right, x, y, false);
 	}
 
 	private void drawNode(Graphics2D graphics2D) {
@@ -156,7 +151,7 @@ public class TreeJpanel extends JPanel {
 
 		if (list.isEmpty()) {
 			countDepth(root, root, true);
-			drawNode(root, 0, 0, false);
+			collectNode(root, 0, 0, false);
 		} else {
 			drawNode(graphics2D);
 		}
