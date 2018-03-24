@@ -10,6 +10,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 
+import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
 import cc.xkxk.learn.DataStructure2D.RedBlackTree.Entry;
@@ -27,6 +28,7 @@ public class TreeJpanel extends JPanel {
 
 	public TreeJpanel(Entry root) {
 		setPreferredSize(new Dimension(width, height));
+		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		setLayout(null);
 		this.root = root;
 	}
@@ -91,23 +93,17 @@ public class TreeJpanel extends JPanel {
 		int ax = x + diameter / 2;
 		int ay = y + diameter / 2;
 		int lax, lay, rax, ray;
-		if (node.right == null) {
-			rax = x + distanceX + diameter / 2;
-			ray = y + distanceY + diameter / 2;
-		} else {
+		if (node.right != null) {
 			rax = x + countOffset(node.depthR) + diameter / 2;
 			ray = y + distanceY + diameter / 2;
+			list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray, null));
 		}
-		if (node.left == null) {
-			lax = x - distanceX + diameter / 2;
-			lay = y + distanceY + diameter / 2;
-		} else {
+		if (node.left != null) {
 			lax = x - countOffset(node.depthL) + diameter / 2;
 			lay = y + distanceY + diameter / 2;
+			list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay, null));
 		}
 
-		list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay, null));
-		list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray, null));
 		list.add(new Graph(1, node.color ? Color.BLACK : Color.RED, x, y, diameter, diameter, null));
 		list.add(new Graph(3, Color.BLACK, x, y, 0, 0, String.valueOf(node.key)));
 
@@ -132,7 +128,7 @@ public class TreeJpanel extends JPanel {
 				graphics2D.fillArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
 			}
 			if (g.type == 2) {
-				graphics2D.drawArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
+				// graphics2D.drawArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
 			}
 			if (g.type == 3) {
 				graphics2D.drawString(g.value, g.x1, g.y1);
@@ -140,9 +136,8 @@ public class TreeJpanel extends JPanel {
 		}
 	}
 
-	@Override
-	protected void paintComponent(Graphics graphics) {
-		super.paintComponent(graphics);
+	public void paint(Graphics graphics) {
+		super.paint(graphics);
 		Graphics2D graphics2D = (Graphics2D) graphics.create();
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 		if (font == null) {
@@ -155,8 +150,7 @@ public class TreeJpanel extends JPanel {
 		} else {
 			drawNode(graphics2D);
 		}
-
-		graphics2D.dispose();
+		System.out.println("ppppp");
 	}
 
 	class Graph {

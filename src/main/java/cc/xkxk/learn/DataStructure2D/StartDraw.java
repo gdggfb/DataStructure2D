@@ -6,13 +6,13 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.util.Random;
 
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JScrollBar;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
@@ -28,15 +28,11 @@ public class StartDraw {
 	}
 
 	public static void doDraw() {
-		JPanel viewJpanel = new JPanel();
 		JPanel board = new JPanel();
 
 		board.setLayout(new BoxLayout(board, BoxLayout.Y_AXIS));
-		JScrollPane scrollPane = new JScrollPane(board);
-
-		viewJpanel.setLayout(new BoxLayout(viewJpanel, BoxLayout.Y_AXIS));
-		viewJpanel.add(scrollPane);
-		viewJpanel.setSize(600, 600);
+		JScrollPane scrollPane = new JScrollPane();
+		scrollPane.getViewport().add(board);
 
 		JButton actionButton = new JButton("插入");
 		JButton closeButton = new JButton("删除");
@@ -45,15 +41,17 @@ public class StartDraw {
 		textField1.setColumns(2);
 
 		RedBlackTree tree = new RedBlackTree();
-		Random r = new Random();
+		JScrollBar sBar = scrollPane.getVerticalScrollBar();
+		sBar.setUnitIncrement(15);
 
 		actionButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				tree.put(r.nextInt(80));
-				if (RedBlackTree.size > 1) {
+				tree.put(Integer.valueOf(textField1.getText()));
+				if (tree.size >= 1) {
 					board.add(new TreeJpanel(tree.root), 0);
 					board.revalidate();
 				}
+				textField1.setText("");;
 			}
 		});
 
@@ -80,7 +78,7 @@ public class StartDraw {
 		c1.weighty = 1.0;
 
 		c1.fill = GridBagConstraints.BOTH;
-		panelContainer.add(viewJpanel, c1);
+		panelContainer.add(scrollPane, c1);
 
 		GridBagConstraints c3 = new GridBagConstraints();
 		c3.gridx = 1;
@@ -92,10 +90,10 @@ public class StartDraw {
 
 		JFrame frame = new JFrame("Tool");
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		panelContainer.setOpaque(true);
+		panelContainer.setOpaque(false);
 		frame.setSize(new Dimension(1366, 760));
+		// frame.setLocationRelativeTo(null);
 		frame.setContentPane(panelContainer);
-		frame.setLocationRelativeTo(null);
 		frame.setVisible(true);
 	}
 }

@@ -9,7 +9,7 @@ public class RedBlackTree {
 	public Entry root;
 	public List<String> process = new ArrayList<>();
 
-	public static int size = 0;
+	public int size = 0;
 
 	public void remove(int key) {
 		Entry p = getEntry(key);
