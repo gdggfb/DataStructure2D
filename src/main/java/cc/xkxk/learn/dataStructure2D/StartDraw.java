@@ -30,17 +30,20 @@ public class StartDraw {
 	public static void action(JTextField textField, JPanel board, RedBlackTree tree, int action) {
 		String value = textField.getText();
 		if (value == null || value.isEmpty()) {
+			textField.requestFocus();
 			return;
 		}
 		textField.setText("");
 		switch (action) {
 		case 0:
 			if (!tree.put(Integer.valueOf(value))) {
+				textField.requestFocus();
 				return;
 			}
 			break;
 		case 1:
 			if (!tree.remove(Integer.valueOf(value)) || tree.size < 1) {
+				textField.requestFocus();
 				return;
 			}
 			break;
@@ -49,6 +52,7 @@ public class StartDraw {
 		}
 		board.add(new TreeJpanel(tree.root, tree.process), 0);
 		board.revalidate();
+		textField.requestFocus();
 	}
 
 	public static void doDraw() {

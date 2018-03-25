@@ -35,39 +35,43 @@ public class TreeJpanel extends JPanel {
 	}
 
 	private int countOffset(int depth) {
-		int n = (int) (distanceX * Math.pow(depth, 1.8) / 1.7);
+		// int n = (int) (distanceX * (Math.pow(depth, 2) + 1));
+		int n = (int) (distanceX * (depth + 1));
 		return n;
 	}
 
-	public void countDepth(Entry node, Entry nodeP, boolean isLeft) {
+	public void depthCount(Entry node, Entry nodeP, boolean isLeft) {
 		if (node == null) {
-			if (isLeft) {
-				nodeP.depthL = 0;
-			} else {
-				nodeP.depthR = 0;
-			}
-			int i = 1;
-			for (Entry n = nodeP; n.parent != null; n = n.parent) {
-				i++;
-				if (n == n.parent.left) {
-					if (n.parent.depthL >= i) {
-						break;
-					} else {
-						n.parent.depthL = i;
-					}
-				} else {
-					if (n.parent.depthR >= i) {
-						break;
-					} else {
-						n.parent.depthR = i;
-					}
-				}
-			}
 			return;
 		}
 
-		countDepth(node.left, node, true);
-		countDepth(node.right, node, false);
+		if (node.right == null && node.left == null) {
+			boolean is = isLeft;
+			for (Entry n = node; n.parent != null; n = n.parent) {
+				if (is != (n == n.parent.left)) {
+					if (is) {
+						n.parent.depthR++;
+					} else {
+						n.parent.depthL++;
+					}
+				}
+				is = n == n.parent.left;
+			}
+		}
+
+		depthCount(node.left, node, true);
+		depthCount(node.right, node, false);
+	}
+
+	public void depthClear(Entry node) {
+		if (node == null) {
+			return;
+		}
+		node.depthL = (node.left != null ? 1 : 0);
+		node.depthR = (node.right != null ? 1 : 0);
+
+		depthClear(node.left);
+		depthClear(node.right);
 	}
 
 	public void collectNode(Entry node, int px, int py, boolean isLeft) {
@@ -84,7 +88,7 @@ public class TreeJpanel extends JPanel {
 			if (node == null) {
 				return;
 			} else {
-				offset = countOffset(isLeft ? node.parent.depthL : node.parent.depthR);
+				offset = countOffset(isLeft ? node.depthR : node.depthL);
 				x = isLeft ? (px - offset) : (px + offset);
 			}
 		}
@@ -93,12 +97,12 @@ public class TreeJpanel extends JPanel {
 		int ay = y + diameter / 2;
 		int lax, lay, rax, ray;
 		if (node.right != null) {
-			rax = x + countOffset(node.depthR) + diameter / 2;
+			rax = x + countOffset(node.right.depthL) + diameter / 2;
 			ray = y + distanceY + diameter / 2;
 			list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray));
 		}
 		if (node.left != null) {
-			lax = x - countOffset(node.depthL) + diameter / 2;
+			lax = x - countOffset(node.left.depthR) + diameter / 2;
 			lay = y + distanceY + diameter / 2;
 			list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay));
 		}
@@ -159,7 +163,8 @@ public class TreeJpanel extends JPanel {
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
 
 		if (list.isEmpty()) {
-			countDepth(root, root, true);
+			depthClear(root);
+			depthCount(root, root, true);
 			collectNode(root, 0, 0, false);
 			collectProcess();
 		}
