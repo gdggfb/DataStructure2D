@@ -7,17 +7,18 @@ public class RedBlackTree {
 	public static final boolean RED = false;
 	public static final boolean BLACK = true;
 	public Entry root;
-	public List<String> process = new ArrayList<>();
+	public List<String> process;
 
 	public int size = 0;
 
-	public void remove(int key) {
+	public boolean remove(int key) {
 		Entry p = getEntry(key);
 		if (p == null)
-			return;
+			return false;
+		process = new ArrayList<>();
 		process.add("remove:" + key);
 		deleteEntry(p);
-		return;
+		return true;
 	}
 
 	private void deleteEntry(Entry p) {
@@ -152,12 +153,14 @@ public class RedBlackTree {
 		setColor(x, BLACK);
 	}
 
-	public void put(int key) {
+	public boolean put(int key) {
 		Entry t = root;
 		if (t == null) {
 			root = new Entry(key, null);
 			size = 1;
-			return;
+			process = new ArrayList<>();
+			process.add("put:" + key);
+			return true;
 		}
 		int cmp;
 		Entry parent;
@@ -170,7 +173,7 @@ public class RedBlackTree {
 			else if (cmp > 0)
 				t = t.right;
 			else
-				return;
+				return false;
 		} while (t != null);
 
 		Entry e = new Entry(key, parent);
@@ -178,9 +181,11 @@ public class RedBlackTree {
 			parent.left = e;
 		else
 			parent.right = e;
-
+		process = new ArrayList<>();
+		process.add("put:" + key);
 		fixAfterInsertion(e);
 		size++;
+		return true;
 	}
 
 	private void fixAfterInsertion(Entry x) {

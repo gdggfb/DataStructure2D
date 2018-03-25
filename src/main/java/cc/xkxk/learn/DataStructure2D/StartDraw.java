@@ -27,31 +27,57 @@ public class StartDraw {
 		});
 	}
 
+	public static void action(JTextField textField, JPanel board, RedBlackTree tree, int action) {
+		String value = textField.getText();
+		if (value == null || value.isEmpty()) {
+			return;
+		}
+		textField.setText("");
+		switch (action) {
+		case 0:
+			if (!tree.put(Integer.valueOf(value))) {
+				return;
+			}
+			break;
+		case 1:
+			if (!tree.remove(Integer.valueOf(value)) || tree.size < 1) {
+				return;
+			}
+			break;
+		default:
+			break;
+		}
+		board.add(new TreeJpanel(tree.root, tree.process), 0);
+		board.revalidate();
+	}
+
 	public static void doDraw() {
 		JPanel board = new JPanel();
-
 		board.setLayout(new BoxLayout(board, BoxLayout.Y_AXIS));
+
 		JScrollPane scrollPane = new JScrollPane();
 		scrollPane.getViewport().add(board);
 
-		JButton actionButton = new JButton("插入");
-		JButton closeButton = new JButton("删除");
-
-		JTextField textField1 = new JTextField();
-		textField1.setColumns(2);
-
-		RedBlackTree tree = new RedBlackTree();
 		JScrollBar sBar = scrollPane.getVerticalScrollBar();
 		sBar.setUnitIncrement(15);
 
-		actionButton.addActionListener(new ActionListener() {
+		JTextField textField = new JTextField();
+		textField.setColumns(2);
+		textField.setDocument(new TextLimitedDocument());
+
+		JButton putButton = new JButton("插入");
+		JButton removeButton = new JButton("删除");
+		RedBlackTree tree = new RedBlackTree();
+
+		putButton.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				tree.put(Integer.valueOf(textField1.getText()));
-				if (tree.size >= 1) {
-					board.add(new TreeJpanel(tree.root), 0);
-					board.revalidate();
-				}
-				textField1.setText("");;
+				action(textField, board, tree, 0);
+			}
+		});
+
+		removeButton.addActionListener(new ActionListener() {
+			public void actionPerformed(ActionEvent e) {
+				action(textField, board, tree, 1);
 			}
 		});
 
@@ -59,10 +85,10 @@ public class StartDraw {
 		bottomPanel.setLayout(new BoxLayout(bottomPanel, BoxLayout.Y_AXIS));
 		JPanel buttonPanel = new JPanel();
 		buttonPanel.setLayout(new BoxLayout(buttonPanel, BoxLayout.Y_AXIS));
-		buttonPanel.add(textField1);
-		buttonPanel.add(actionButton);
+		buttonPanel.add(textField);
+		buttonPanel.add(putButton);
 		buttonPanel.add(Box.createHorizontalGlue());
-		buttonPanel.add(closeButton);
+		buttonPanel.add(removeButton);
 
 		bottomPanel.add(Box.createVerticalStrut(10));
 		bottomPanel.add(buttonPanel);
@@ -92,7 +118,6 @@ public class StartDraw {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		panelContainer.setOpaque(false);
 		frame.setSize(new Dimension(1366, 760));
-		// frame.setLocationRelativeTo(null);
 		frame.setContentPane(panelContainer);
 		frame.setVisible(true);
 	}

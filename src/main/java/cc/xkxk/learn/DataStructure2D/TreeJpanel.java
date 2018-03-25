@@ -17,24 +17,25 @@ import cc.xkxk.learn.DataStructure2D.RedBlackTree.Entry;
 
 public class TreeJpanel extends JPanel {
 	private static final long serialVersionUID = -8983985863229007323L;
-	private static Font font = null;
 	private int width = 1000;
 	private int height = 400;
 	private int diameter = 20;
 	private int distanceX = 11;
 	private int distanceY = 30;
 	private Entry root = null;
+	private List<String> process = null;
 	private List<Graph> list = new ArrayList<>();
 
-	public TreeJpanel(Entry root) {
+	public TreeJpanel(Entry root, List<String> process) {
 		setPreferredSize(new Dimension(width, height));
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		setLayout(null);
 		this.root = root;
+		this.process = process;
 	}
 
 	private int countOffset(int depth) {
-		int n = (int) (distanceX * Math.pow(depth, 1.6) / 1.7);
+		int n = (int) (distanceX * Math.pow(depth, 1.8) / 1.7);
 		return n;
 	}
 
@@ -81,8 +82,6 @@ public class TreeJpanel extends JPanel {
 		} else {
 			y = py + distanceY;
 			if (node == null) {
-				list.add(new Graph(2, Color.RED, isLeft ? (px - distanceX) : (px + distanceX), y, diameter, diameter,
-						null));
 				return;
 			} else {
 				offset = countOffset(isLeft ? node.parent.depthL : node.parent.depthR);
@@ -96,19 +95,36 @@ public class TreeJpanel extends JPanel {
 		if (node.right != null) {
 			rax = x + countOffset(node.depthR) + diameter / 2;
 			ray = y + distanceY + diameter / 2;
-			list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray, null));
+			list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray));
 		}
 		if (node.left != null) {
 			lax = x - countOffset(node.depthL) + diameter / 2;
 			lay = y + distanceY + diameter / 2;
-			list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay, null));
+			list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay));
 		}
 
-		list.add(new Graph(1, node.color ? Color.BLACK : Color.RED, x, y, diameter, diameter, null));
-		list.add(new Graph(3, Color.BLACK, x, y, 0, 0, String.valueOf(node.key)));
-
+		list.add(new Graph(1, node.color ? Color.BLACK : Color.RED, x, y, diameter, diameter));
+		list.add(new Graph(3, Color.BLACK, x, y, 0, 0, String.valueOf(node.key), null));
+		System.out.println("key:" + node.key + ",R:" + node.depthR + ",L:" + node.depthL);
 		collectNode(node.left, x, y, true);
 		collectNode(node.right, x, y, false);
+	}
+
+	private void collectProcess() {
+		String str = process.get(0);
+		Color color = null;
+		Font font = new Font("宋体", Font.PLAIN, 20);
+		int y = 20;
+		if (str.startsWith("put")) {
+			color = Color.BLACK;
+		} else {
+			color = Color.BLACK;
+		}
+		for (String s : process) {
+			list.add(new Graph(10, color, 10, y, 0, 0, s, font));
+			y = y + 20;
+		}
+
 	}
 
 	private void drawNode(Graphics2D graphics2D) {
@@ -121,16 +137,17 @@ public class TreeJpanel extends JPanel {
 
 		for (Graph g : list) {
 			graphics2D.setColor(g.color);
+			graphics2D.setFont(g.font);
 			if (g.type == 0) {
 				graphics2D.drawLine(g.x1, g.y1, g.x2, g.y2);
 			}
 			if (g.type == 1) {
 				graphics2D.fillArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
 			}
-			if (g.type == 2) {
-				// graphics2D.drawArc(g.x1, g.y1, g.x2, g.y2, 0, 360);
-			}
 			if (g.type == 3) {
+				graphics2D.drawString(g.value, g.x1, g.y1);
+			}
+			if (g.type == 10) {
 				graphics2D.drawString(g.value, g.x1, g.y1);
 			}
 		}
@@ -140,29 +157,36 @@ public class TreeJpanel extends JPanel {
 		super.paint(graphics);
 		Graphics2D graphics2D = (Graphics2D) graphics.create();
 		graphics2D.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
-		if (font == null) {
-			font = new Font("宋体", Font.PLAIN, 18);
-		}
 
 		if (list.isEmpty()) {
 			countDepth(root, root, true);
 			collectNode(root, 0, 0, false);
-		} else {
-			drawNode(graphics2D);
+			collectProcess();
 		}
-		System.out.println("ppppp");
+		drawNode(graphics2D);
 	}
 
 	class Graph {
-		int type;// 0 - 直线; 1 - 实心圆；2 - 空心圆； 3 - 写字
+		int type;// 0 - 直线; 1 - 实心圆； 3 - 写字 ； 10 - 过程描述
 		Color color;
 		int x1;
 		int y1;
 		int x2;
 		int y2;
 		String value;
+		Font font;
 
-		public Graph(int type, Color color, int x1, int y1, int x2, int y2, String value) {
+		public Graph(int type, Color color, int x1, int y1, int x2, int y2) {
+			super();
+			this.type = type;
+			this.color = color;
+			this.x1 = x1;
+			this.y1 = y1;
+			this.x2 = x2;
+			this.y2 = y2;
+		}
+
+		public Graph(int type, Color color, int x1, int y1, int x2, int y2, String value, Font font) {
 			super();
 			this.type = type;
 			this.color = color;
@@ -171,6 +195,7 @@ public class TreeJpanel extends JPanel {
 			this.x2 = x2;
 			this.y2 = y2;
 			this.value = value;
+			this.font = font;
 		}
 	}
 }
