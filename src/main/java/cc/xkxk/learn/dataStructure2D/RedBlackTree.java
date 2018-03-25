@@ -1,4 +1,4 @@
-package cc.xkxk.learn.DataStructure2D;
+package cc.xkxk.learn.dataStructure2D;
 
 import java.util.ArrayList;
 import java.util.List;

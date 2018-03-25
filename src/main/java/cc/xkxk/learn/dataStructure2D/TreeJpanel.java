@@ -1,4 +1,4 @@
-package cc.xkxk.learn.DataStructure2D;
+package cc.xkxk.learn.dataStructure2D;
 
 import java.awt.Color;
 import java.awt.Dimension;
@@ -13,7 +13,7 @@ import java.util.List;
 import javax.swing.BorderFactory;
 import javax.swing.JPanel;
 
-import cc.xkxk.learn.DataStructure2D.RedBlackTree.Entry;
+import cc.xkxk.learn.dataStructure2D.RedBlackTree.Entry;
 
 public class TreeJpanel extends JPanel {
 	private static final long serialVersionUID = -8983985863229007323L;
