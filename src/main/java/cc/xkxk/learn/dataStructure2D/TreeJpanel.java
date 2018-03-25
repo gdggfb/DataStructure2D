@@ -42,9 +42,9 @@ public class TreeJpanel extends JPanel {
 	public void countDepth(Entry node, Entry nodeP, boolean isLeft) {
 		if (node == null) {
 			if (isLeft) {
-				nodeP.depthL = 1;
+				nodeP.depthL = 0;
 			} else {
-				nodeP.depthR = 1;
+				nodeP.depthR = 0;
 			}
 			int i = 1;
 			for (Entry n = nodeP; n.parent != null; n = n.parent) {
