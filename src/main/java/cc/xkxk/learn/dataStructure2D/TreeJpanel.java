@@ -46,13 +46,17 @@ public class TreeJpanel extends JPanel {
 		}
 
 		boolean is = isLeft;
+		int same = 0;
 		for (Entry n = node; n.parent != null; n = n.parent) {
 			if (is != (n == n.parent.left)) {
 				if (is) {
-					n.parent.depthR++;
+					n.parent.depthR = n.parent.depthR + 1 + same;
 				} else {
-					n.parent.depthL++;
+					n.parent.depthL = n.parent.depthL + 1 + same;
 				}
+				same = 0;
+			} else {
+				same = same + 1;
 			}
 			is = n == n.parent.left;
 		}
@@ -75,18 +79,14 @@ public class TreeJpanel extends JPanel {
 	public void collectNode(Entry node, int px, int py, boolean isLeft) {
 		int x, y, offset;
 		if (node == root) {
-			if (root.depthL > 6 || root.depthR > 6) {
-				x = (width * root.depthL) / (root.depthL + root.depthR);
-			} else {
-				x = width / 2 - diameter / 2;
-			}
+			x = width / 2 - diameter / 2;
 			y = 20;
 		} else {
 			y = py + distanceY;
 			if (node == null) {
 				return;
 			} else {
-				offset = countOffset(isLeft ? node.depthR : node.depthL);
+				offset = countOffset(isLeft ? node.parent.depthL : node.parent.depthR);
 				x = isLeft ? (px - offset) : (px + offset);
 			}
 		}
@@ -95,12 +95,12 @@ public class TreeJpanel extends JPanel {
 		int ay = y + diameter / 2;
 		int lax, lay, rax, ray;
 		if (node.right != null) {
-			rax = x + countOffset(node.right.depthL) + diameter / 2;
+			rax = x + countOffset(node.depthR) + diameter / 2;
 			ray = y + distanceY + diameter / 2;
 			list.add(new Graph(0, Color.BLUE, ax, ay, rax, ray));
 		}
 		if (node.left != null) {
-			lax = x - countOffset(node.left.depthR) + diameter / 2;
+			lax = x - countOffset(node.depthL) + diameter / 2;
 			lay = y + distanceY + diameter / 2;
 			list.add(new Graph(0, Color.BLUE, ax, ay, lax, lay));
 		}

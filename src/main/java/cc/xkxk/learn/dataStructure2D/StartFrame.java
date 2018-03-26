@@ -1,11 +1,11 @@
 package cc.xkxk.learn.dataStructure2D;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.EventQueue;
 import java.awt.Font;
-import java.awt.HeadlessException;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -22,19 +22,13 @@ import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;
 import javax.swing.text.PlainDocument;
 
-public class StartFrame extends JFrame {
-	private static final long serialVersionUID = 1L;
+public class StartFrame {
 	private static final String title = "DataStructure2D - v1.0 - create by github.com/gdggfb";
 	private static final String putButtonDesc = "插入";
 	private static final String removeButtonDesc = "删除";
 
 	public static void main(String[] args) {
-		EventQueue.invokeLater(() -> new StartFrame());
-	}
-
-	public StartFrame() throws HeadlessException {
-		super(title);
-		doDraw();
+		EventQueue.invokeLater(() -> new StartFrame().doDraw());
 	}
 
 	public void action(JTextField textField, JPanel board, RedBlackTree tree, int action) {
@@ -74,11 +68,12 @@ public class StartFrame extends JFrame {
 		JPanel container = createContainer(scrollPane, buttonPanel);
 		JMenuBar menubar = createMenuBar();
 
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-		setJMenuBar(menubar);
-		setSize(new Dimension(1366, 760));
-		setContentPane(container);
-		setVisible(true);
+		JFrame frame = new JFrame(title);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+		frame.setJMenuBar(menubar);
+		frame.setSize(new Dimension(1366, 760));
+		frame.setContentPane(container);
+		frame.setVisible(true);
 	}
 
 	private JMenuBar createMenuBar() {
@@ -97,9 +92,22 @@ public class StartFrame extends JFrame {
 
 	private JPanel createContainer(JScrollPane scrollPane, JPanel buttonPanel) {
 		JPanel container = new JPanel();
-		container.setLayout(new BorderLayout());
-		container.add(buttonPanel, BorderLayout.WEST);
-		container.add(scrollPane, BorderLayout.EAST);
+		container.setLayout(new GridBagLayout());
+		GridBagConstraints c3 = new GridBagConstraints();
+		c3.gridx = 0;
+		c3.gridy = 0;
+		c3.weightx = 0;
+		c3.weighty = 1.0;
+		c3.fill = GridBagConstraints.HORIZONTAL;
+		container.add(buttonPanel, c3);
+
+		GridBagConstraints c1 = new GridBagConstraints();
+		c1.gridx = 1;
+		c1.gridy = 0;
+		c1.weightx = 1.0;
+		c1.weighty = 1.0;
+		c1.fill = GridBagConstraints.BOTH;
+		container.add(scrollPane, c1);
 		container.setOpaque(false);
 		return container;
 	}
@@ -150,7 +158,7 @@ public class StartFrame extends JFrame {
 				if (str == null) {
 					return;
 				}
-				if ((getLength() + str.length()) <= 3) {
+				if ((getLength() + str.length()) <= 2) {
 					char[] chars = str.toCharArray();
 					int length = 0;
 					for (int i = 0; i < chars.length; i++) {
