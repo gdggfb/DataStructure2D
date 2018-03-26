@@ -7,7 +7,6 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 
 import javax.swing.BorderFactory;
@@ -17,11 +16,14 @@ import cc.xkxk.learn.dataStructure2D.RedBlackTree.Entry;
 
 public class TreeJpanel extends JPanel {
 	private static final long serialVersionUID = -8983985863229007323L;
+
+	private static final int diameter = 20;
+	private static final int distanceX = 11;
+	private static final int distanceY = 30;
+
 	private int width = 1000;
 	private int height = 400;
-	private int diameter = 20;
-	private int distanceX = 11;
-	private int distanceY = 30;
+
 	private Entry root = null;
 	private List<String> process = null;
 	private List<Graph> list = new ArrayList<>();
@@ -35,9 +37,7 @@ public class TreeJpanel extends JPanel {
 	}
 
 	private int countOffset(int depth) {
-		// int n = (int) (distanceX * (Math.pow(depth, 2) + 1));
-		int n = (int) (distanceX * (depth + 1));
-		return n;
+		return (int) (distanceX * (depth + 1));
 	}
 
 	public void depthCount(Entry node, Entry nodeP, boolean isLeft) {
@@ -45,18 +45,16 @@ public class TreeJpanel extends JPanel {
 			return;
 		}
 
-		if (node.right == null && node.left == null) {
-			boolean is = isLeft;
-			for (Entry n = node; n.parent != null; n = n.parent) {
-				if (is != (n == n.parent.left)) {
-					if (is) {
-						n.parent.depthR++;
-					} else {
-						n.parent.depthL++;
-					}
+		boolean is = isLeft;
+		for (Entry n = node; n.parent != null; n = n.parent) {
+			if (is != (n == n.parent.left)) {
+				if (is) {
+					n.parent.depthR++;
+				} else {
+					n.parent.depthL++;
 				}
-				is = n == n.parent.left;
 			}
+			is = n == n.parent.left;
 		}
 
 		depthCount(node.left, node, true);
@@ -124,22 +122,17 @@ public class TreeJpanel extends JPanel {
 		} else {
 			color = Color.BLACK;
 		}
+
 		for (String s : process) {
 			list.add(new Graph(10, color, 10, y, 0, 0, s, font));
 			y = y + 20;
 		}
-
 	}
 
 	private void drawNode(Graphics2D graphics2D) {
-		list.sort(new Comparator<Graph>() {
-			@Override
-			public int compare(Graph o1, Graph o2) {
-				return o1.type - o2.type;
-			}
-		});
+		list.sort((o1, o2) -> o1.type - o2.type);
 
-		for (Graph g : list) {
+		list.forEach((g) -> {
 			graphics2D.setColor(g.color);
 			graphics2D.setFont(g.font);
 			if (g.type == 0) {
@@ -154,7 +147,7 @@ public class TreeJpanel extends JPanel {
 			if (g.type == 10) {
 				graphics2D.drawString(g.value, g.x1, g.y1);
 			}
-		}
+		});
 	}
 
 	public void paint(Graphics graphics) {
