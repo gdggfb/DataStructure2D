@@ -37,7 +37,7 @@ public class TreeJpanel extends JPanel {
 	}
 
 	private int countOffset(int depth) {
-		return (int) (distanceX * (depth + 1));
+		return (int) (distanceX * (depth));
 	}
 
 	public void depthCount(Entry node, Entry nodeP, boolean isLeft) {
@@ -51,8 +51,10 @@ public class TreeJpanel extends JPanel {
 			if (is != (n == n.parent.left)) {
 				if (is) {
 					n.parent.depthR = n.parent.depthR + 1 + same;
+					System.out.println("key:" + node.key + "now:" + n.key + ",parentR:" + n.parent.depthR);
 				} else {
 					n.parent.depthL = n.parent.depthL + 1 + same;
+					System.out.println("key:" + node.key + "now:" + n.key + ",parentL:" + n.parent.depthR);
 				}
 				same = 0;
 			} else {
@@ -60,7 +62,6 @@ public class TreeJpanel extends JPanel {
 			}
 			is = n == n.parent.left;
 		}
-
 		depthCount(node.left, node, true);
 		depthCount(node.right, node, false);
 	}

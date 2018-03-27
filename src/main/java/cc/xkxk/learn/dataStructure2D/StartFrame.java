@@ -31,12 +31,12 @@ public class StartFrame {
 		EventQueue.invokeLater(() -> new StartFrame().doDraw());
 	}
 
-	public void action(JTextField textField, JPanel board, RedBlackTree tree, int action) {
+	private void action(JTextField textField, JPanel board, RedBlackTree tree, int action) {
 		doAction(textField, board, tree, action);
 		textField.requestFocus();
 	}
 
-	public void doAction(JTextField textField, JPanel board, RedBlackTree tree, int action) {
+	private void doAction(JTextField textField, JPanel board, RedBlackTree tree, int action) {
 		String value = textField.getText();
 		if (value == null || value.isEmpty()) {
 			return;
@@ -60,7 +60,7 @@ public class StartFrame {
 		board.revalidate();
 	}
 
-	public void doDraw() {
+	private void doDraw() {
 		JPanel board = createBoard();
 		JTextField textField = createTextField();
 		JPanel buttonPanel = createButtonPanel(board, textField);
