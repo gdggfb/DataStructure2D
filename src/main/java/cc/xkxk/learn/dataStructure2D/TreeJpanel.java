@@ -46,19 +46,14 @@ public class TreeJpanel extends JPanel {
 		}
 
 		boolean is = isLeft;
-		int same = 0;
 		for (Entry n = node; n.parent != null; n = n.parent) {
 			if (is != (n == n.parent.left)) {
 				if (is) {
-					n.parent.depthR = n.parent.depthR + 1 + same;
-					System.out.println("key:" + node.key + "now:" + n.key + ",parentR:" + n.parent.depthR);
+					n.parent.depthR = n.parent.depthR + 1;
 				} else {
-					n.parent.depthL = n.parent.depthL + 1 + same;
-					System.out.println("key:" + node.key + "now:" + n.key + ",parentL:" + n.parent.depthR);
+					n.parent.depthL = n.parent.depthL + 1;
 				}
-				same = 0;
 			} else {
-				same = same + 1;
 			}
 			is = n == n.parent.left;
 		}
@@ -108,7 +103,6 @@ public class TreeJpanel extends JPanel {
 
 		list.add(new Graph(1, node.color ? Color.BLACK : Color.RED, x, y, diameter, diameter));
 		list.add(new Graph(3, Color.BLACK, x, y, 0, 0, String.valueOf(node.key), null));
-		System.out.println("key:" + node.key + ",R:" + node.depthR + ",L:" + node.depthL);
 		collectNode(node.left, x, y, true);
 		collectNode(node.right, x, y, false);
 	}
